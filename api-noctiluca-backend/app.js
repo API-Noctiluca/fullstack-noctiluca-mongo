@@ -37,14 +37,19 @@ app.use((req, res, next) => {
 // ---------------------
 // Conexión a la base de datos
 // ---------------------
+// try {
+//     await db_connection.authenticate();               // Conecta a la DB
+//     await ButterflyModel.sync();       // Sincroniza el modelo Butterfly
+//     console.log("Database connected and Butterfly table synced.");
+// } catch (err) {
+//     console.error("Database connection error:", err);
+// }
 try {
-    await db_connection.authenticate();               // Conecta a la DB
-    await ButterflyModel.sync();       // Sincroniza el modelo Butterfly
-    console.log("Database connected and Butterfly table synced.");
+    await db_connection();
+    console.log("Database connected.");
 } catch (err) {
     console.error("Database connection error:", err);
 }
-
 // ---------------------
 // Rutas
 // ---------------------
