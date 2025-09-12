@@ -2,10 +2,11 @@ import request from "supertest";
 import { app, server } from "../app.js"
 import db_connection from "../database/db_connection.js"
 import ButterflyModel from "../models/ButterflyModel.js";
+import mongoose from "mongoose";
 
 describe("test butterflies crud", () => {
     beforeAll(async () => { // antes de todo se conecta
-        await db_connection.authenticate() //con eso se conecta
+        await db_connection.authenticate() //con eso se conecta || cambiarlo por el db de mongoose
     })
 
     //Método GET all butterflies
