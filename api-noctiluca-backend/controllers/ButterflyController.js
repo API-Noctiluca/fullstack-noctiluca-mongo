@@ -1,20 +1,21 @@
 import ButterflyModel from "../models/ButterflyModel.js";
 
-//GET - Trae todas las mariposas
+//Adaptado método GET - Trae todas las mariposas
 export const getAllButterflies = async (req, res) => {
-    try {
-        const butterflies = await ButterflyModel.findAll();
-        res.status(200).json(butterflies);
-    } catch (error) {
-        res.status(500).json({ error: "Error al obtener las mariposas" });
-    }
+  try {
+    const butterflies = await ButterflyModel.find(); //En Mongo/Mongoose
+    res.status(200).json(butterflies);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener las mariposas" });
+  }
 };
 
-// GET - get one butterfly by ID
+// GET - get one butterfly by ID (MongoDB / Mongoose)
 export const getOneButterfly = async (req, res) => {
   try {
     const { id } = req.params;
-    const butterfly = await ButterflyModel.findByPk(id);
+
+    const butterfly = await ButterflyModel.findById(id); // 👈 Mongo
 
     if (!butterfly) {
       return res.status(404).json({ message: "Mariposa no encontrada" });
@@ -26,21 +27,25 @@ export const getOneButterfly = async (req, res) => {
   }
 };
 
-//Método PUT - Actualiza una mariposa
+//Adaptado método PUT - Actualiza una mariposa
 export const updateButterfly = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const butterfly = await ButterflyModel.findByPk(id);
+  try {
+    const { id } = req.params;
 
-        if (!butterfly) {
-            return res.status(404).json({ message: "Mariposa no encontrada" });
-        }
+    const butterfly = await ButterflyModel.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
 
-        await butterfly.update(req.body);
-        res.status(200).json(butterfly);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    if (!butterfly) {
+      return res.status(404).json({ message: "Mariposa no encontrada" });
     }
+
+    res.status(200).json(butterfly);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 
