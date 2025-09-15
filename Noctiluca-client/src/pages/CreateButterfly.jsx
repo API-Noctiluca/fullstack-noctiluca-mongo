@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createButterfly } from '../services/ButterflyServices.jsx';
+import Swal from 'sweetalert2';
 import '../style/createbutterfly.css';
 
 export default function CreateButterfly() {
@@ -20,10 +21,11 @@ export default function CreateButterfly() {
     image: ''
   });
 
+  const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
-  const handleImageUpload = () => {
 
+  const handleImageUpload = () => {
     if (!window.cloudinary) {
       alert('Error: Cloudinary no está disponible. Verifica que el script esté cargado.');
       return;
@@ -40,29 +42,36 @@ export default function CreateButterfly() {
       sources: ['local', 'url', 'camera']
     }, (error, result) => {
       console.log('Cloudinary result:', result); 
-
       if (error) {
         console.error('Error en Cloudinary:', error);
         return;
       }
-
       if (result && result.event === "success") {
-        console.log('Imagen subida exitosamente:', result.info.secure_url);
-        setFormData(prev => ({
-          ...prev,
-          image: result.info.secure_url
-        }));
+        setFormData(prev => ({ ...prev, image: result.info.secure_url }));
       }
     });
 
     widget.open();
   };
+
+  const validateField = (name, value) => {
+    if (['name','habitat','feeding','morphology','family','life','conservation','about_conservation','location'].includes(name) && !value.trim()) {
+      return 'Este campo es obligatorio';
+    }
+    return '';
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    const error = validateField(name, value);
+    setFormErrors(prev => {
+      const updated = { ...prev };
+      if (error) updated[name] = error;
+      else delete updated[name];
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -70,15 +79,20 @@ export default function CreateButterfly() {
     setIsSubmitting(true);
     setMessage('');
 
-    try {
-      const newId = Date.now().toString();
-      const newButterfly = {
-        //id: newId,
-        ...formData
-      };
+    if (Object.keys(formErrors).length > 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errores en el formulario',
+        html: Object.values(formErrors).join('<br>')
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
+    try {
+      const newButterfly = { ...formData };
       const result = await createButterfly(newButterfly);
-      
+
       if (result) {
         setMessage('¡Mariposa añadida correctamente!');
         setFormData({
@@ -94,10 +108,8 @@ export default function CreateButterfly() {
           about_conservation: '',
           image: ''
         });
-
-        setTimeout(() => {
-          navigate('/butterflygallery'); 
-        }, 1500);
+        setFormErrors({});
+        setTimeout(() => navigate('/butterflygallery'), 1500);
       } else {
         setMessage('Error al añadir la mariposa');
       }
@@ -108,18 +120,13 @@ export default function CreateButterfly() {
     }
   };
 
-  const handleBackToGallery = () => {
-    navigate('/butterflygallery');
-  };
+  const handleBackToGallery = () => navigate('/butterflygallery');
 
   return (
     <section className="bg-gradient-to-t from-rosaatardecer to-indigoprofundo font-libre min-h-screen">
       <div className="create-butterfly-container">
 
-        {/* Contenido principal */}
         <div className="main-content">
-          
-          {/* FORMULARIO */}
           <div className="form-wrapper">
             <div className="header-section">
               <h1 className="main-title">
@@ -305,7 +312,7 @@ export default function CreateButterfly() {
                 <div className="submit-container">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || Object.keys(formErrors).length > 0}
                     className={`submit-button ${isSubmitting ? 'disabled' : ''}`}
                   >
                     {isSubmitting ? 'Guardando...' : 'Crear Mariposa'}
