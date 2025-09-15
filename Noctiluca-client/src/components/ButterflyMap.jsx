@@ -221,7 +221,7 @@ const Map = () => {
   // 🦋 Manejo clic en mariposa 
   const handleButterflyClick = (butterfly) => {
     setSelectedCountry(null);
-    navigate(`/butterflydetail/${butterfly.id}`);
+    navigate(`/butterflydetail/${butterfly._id}`);
   };
 
 
@@ -439,7 +439,7 @@ const Map = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 {selectedCountry.butterflies.map(butterfly => (
                   <div
-                    key={butterfly.id}
+                    key={butterfly._id}
                     onClick={() => handleButterflyClick(butterfly)}
                     className="cursor-pointer rounded-lg sm:rounded-xl shadow-md border border-[#69397150] bg-[#fcf5e5cc] hover:shadow-lg hover:bg-[#ede6f6] transition-colors duration-200 flex flex-col overflow-hidden group touch-manipulation"
                     style={{
