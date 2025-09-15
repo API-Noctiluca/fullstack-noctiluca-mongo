@@ -165,55 +165,67 @@ describe("test butterflies crud", () => {
     })
 
     //Método PUT one butterfly/:id
-    // describe("PUT /butterflies/:id", () => {
-    //     let response 
-    //     let createdButterfly = {}
-    //     let updatedData
+    describe("PUT /butterflies/:id", () => {
+        let response 
+        let createdButterfly = {}
+        let updatedData
 
-    //     beforeEach(async () => {
-    //         createdButterfly = await ButterflyModel.create({
-    //             name: "Test original Butterfly",
-    //             other_names: "Testus original papilio",
-    //             family: "Family test",
-    //             location: "Testland origin",
-    //             habitat: "Test habitat",
-    //             morphology: "Test origin morphology",
-    //             life: "Test origin life cycle",
-    //             feeding: "Test o food",
-    //             conservation: "Test or conservation",
-    //             about_conservation: "LC", 
-    //             image: "testorigin.jpg"
-    //         })
+        beforeAll(async () =>{
+            await db_connection()
+        })
 
-    //         updatedData = { 
-    //             name: "Update Name",
-    //             location: "Update Location",
-    //             image: "updated.jpg"
-    //         }
+        // afterAll(async () => {
+        //     await mongoose.connection.close()
+        // })
+
+        // afterEach(async () =>{
+        //     await ButterflyModel.deleteMany({})
+        // })
+
+        beforeEach(async () => {
+            createdButterfly = await ButterflyModel.create({
+                name: "Test original Butterfly",
+                other_names: "Testus original papilio",
+                family: "Family test",
+                location: "Testland origin",
+                habitat: "Test habitat",
+                morphology: "Test origin morphology",
+                life: "Test origin life cycle",
+                feeding: "Test o food",
+                conservation: "Test or conservation",
+                about_conservation: "LC", 
+                image: "testorigin.jpg"
+            })
+
+            updatedData = { 
+                name: "Update Name Butterfly",
+                location: "Update Location Butterfly",
+                habitat: "updated habitat"
+            }
     
-    //         response = await request(app).put(`/api/butterflies/${createdButterfly.id}`).send(updatedData)
-    //     })
+            response = await request(app).put(`/api/butterflies/${createdButterfly._id}`).send(updatedData)
+        })
 
-    //     test("should return status 200 and JSON", () => {
-    //         expect(response.status).toBe(200)
-    //         expect(response.headers["content-type"]).toContain("json")
-    //     })
+        test("should return status 200 and JSON", () => {
+            expect(response.status).toBe(200)
+            expect(response.headers["content-type"]).toContain("json")
+        })
 
-    //     test("should return the updated butterfly", () => {
-    //         expect(response.body).toBeInstanceOf(Object)
-    //         expect(response.body.id).toBe(createdButterfly.id)
-    //         expect(response.body.name).toBe(updatedData.name)
-    //         expect(response.body.location).toBe(updatedData.location)
-    //         expect(response.body.image).toBe(updatedData.image)
-    //     })
+        test("should return the updated butterfly", () => {
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body._id).toBe(createdButterfly._id.toString())
+            expect(response.body.name).toBe(updatedData.name)
+            expect(response.body.location).toBe(updatedData.location)
+            expect(response.body.habitat).toBe(updatedData.habitat)
+        })
 
-    //     test("should update the butterfly in the database", async () => {
-    //         const butterflyInDB = await ButterflyModel.findByPk(createdButterfly.id) //findByPk: para buscar un registro por su PrimaryKey
-    //         expect(butterflyInDB.name).toBe(updatedData.name)
-    //         expect(butterflyInDB.location).toBe(updatedData.location)
-    //         expect(butterflyInDB.image).toBe(updatedData.image)
-    //     })
-    // })
+        test("should update the butterfly in the database", async () => {
+            const butterflyInDB = await ButterflyModel.findById(createdButterfly._id) //findByPk: para buscar un registro por su PrimaryKey
+            expect(butterflyInDB.name).toBe(updatedData.name)
+            expect(butterflyInDB.location).toBe(updatedData.location)
+            expect(butterflyInDB.habitat).toBe(updatedData.habitat)
+        })
+    })
 
     //Método DELETE one butterfly/:id
     // describe("DELETE /butterflies", () => {
