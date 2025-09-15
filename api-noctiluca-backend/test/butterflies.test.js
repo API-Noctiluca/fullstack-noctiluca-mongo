@@ -5,14 +5,23 @@ import ButterflyModel from "../models/ButterflyModel.js";
 import mongoose from "mongoose";
 
 describe("test butterflies crud", () => {
-    beforeAll(async () => { // antes de todo se conecta
-        await db_connection.authenticate() //con eso se conecta || cambiarlo por el db de mongoose
-    })
+    // beforeAll(async () => { // antes de todo se conecta
+        // await db_connection.authenticate() //con eso se conecta || cambiarlo por el db de mongoose
+    // })
 
     //Método GET all butterflies
     describe("GET /butterflies", () => {
         let response
+        beforeAll(async () => {//Conectar a Mongo Atlas una vez antes de correr los test
+            await db_connection()
+        })
 
+        //Cerrar la conexión al terminar
+        afterAll(async () => {
+            await mongoose.connection.close()
+        })
+
+        //Limpiar la colección después de cada test
         afterEach(async () => {//Limpiar la colección después de cada test
             await ButterflyModel.delete({})
         })
