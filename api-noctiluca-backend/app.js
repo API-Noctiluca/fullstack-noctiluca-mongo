@@ -66,5 +66,5 @@ app.use(errorHandler);
 // ---------------------
 
 export const server = app.listen(PORT, () => {
-    console.log(`API running on http://${HOST}:${PORT}`)
+    console.log(`API running on http://${HOST}:${PORT}/api/butterflies`)
 })
