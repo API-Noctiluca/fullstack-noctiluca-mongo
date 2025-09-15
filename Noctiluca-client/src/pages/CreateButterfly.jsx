@@ -54,7 +54,6 @@ export default function CreateButterfly() {
     widget.open();
   };
 
-  // Validación mínima según backend
   const validateField = (name, value) => {
     switch(name) {
       case "name":
@@ -190,6 +189,7 @@ export default function CreateButterfly() {
               )}
 
               <div className="form-content">
+
                 {/* Primera fila - 3 columnas */}
                 <div className="form-row three-cols">
                   <div className="form-group">
@@ -199,20 +199,20 @@ export default function CreateButterfly() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.name ? 'error' : ''}`}
                       required
                     />
                     {formErrors.name && <p className="error-text">{formErrors.name}</p>}
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">habitat</label>
+                    <label className="form-label">Habitat</label>
                     <input
                       type="text"
                       name="habitat"
                       value={formData.habitat}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.habitat ? 'error' : ''}`}
                       required
                     />
                     {formErrors.habitat && <p className="error-text">{formErrors.habitat}</p>}
@@ -225,7 +225,7 @@ export default function CreateButterfly() {
                       name="feeding"
                       value={formData.feeding}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.feeding ? 'error' : ''}`}
                       required
                     />
                     {formErrors.feeding && <p className="error-text">{formErrors.feeding}</p>}
@@ -241,7 +241,7 @@ export default function CreateButterfly() {
                       name="other_names"
                       value={formData['other_names']}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.other_names ? 'error' : ''}`}
                     />
                   </div>
 
@@ -252,7 +252,7 @@ export default function CreateButterfly() {
                       name="morphology"
                       value={formData.morphology}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.morphology ? 'error' : ''}`}
                       required
                     />
                     {formErrors.morphology && <p className="error-text">{formErrors.morphology}</p>}
@@ -265,7 +265,7 @@ export default function CreateButterfly() {
                       name="conservation"
                       value={formData.conservation}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.conservation ? 'error' : ''}`}
                       required
                     />
                     {formErrors.conservation && <p className="error-text">{formErrors.conservation}</p>}
@@ -281,7 +281,7 @@ export default function CreateButterfly() {
                       name="family"
                       value={formData.family}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.family ? 'error' : ''}`}
                       required
                     />
                     {formErrors.family && <p className="error-text">{formErrors.family}</p>}
@@ -294,7 +294,7 @@ export default function CreateButterfly() {
                       name="life"
                       value={formData.life}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.life ? 'error' : ''}`}
                       required
                     />
                     {formErrors.life && <p className="error-text">{formErrors.life}</p>}
@@ -306,7 +306,7 @@ export default function CreateButterfly() {
                       name="about_conservation"
                       value={formData.about_conservation}
                       onChange={handleChange}
-                      className="form-select"
+                      className={`form-select ${formErrors.about_conservation ? 'error' : ''}`}
                       required
                     >
                       <option value="">Seleccionar</option>
@@ -329,7 +329,7 @@ export default function CreateButterfly() {
                       value={formData.location}
                       onChange={handleChange}
                       rows="4"
-                      className="form-textarea"
+                      className={`form-textarea ${formErrors.location ? 'error' : ''}`}
                       required
                     />
                     {formErrors.location && <p className="error-text">{formErrors.location}</p>}
@@ -343,7 +343,7 @@ export default function CreateButterfly() {
                         value={formData.image}
                         onChange={handleChange}
                         rows="3"
-                        className="form-textarea"
+                        className={`form-textarea ${formErrors.image ? 'error' : ''}`}
                         placeholder="https://"
                       />
                       <div className="upload-divider">O</div>
@@ -356,7 +356,6 @@ export default function CreateButterfly() {
                       </button>
                     </div>
                   </div>
-
                 </div>
 
                 <div className="submit-container">
