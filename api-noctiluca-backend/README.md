@@ -1,78 +1,83 @@
 <p align="center">
   <img src="./assets/cover.jpg" alt="cover" width="500px"/>
 </p>
-
+<p align="center">
+  <a href="../README.md">⬅️ Volver al README principal</a>
+</p>
+<p align="center">
+  <a href="../Noctiluca-client/README.md">⬅️ Volver al README frontend</a>
+</p>
 ## 🐛 Presentación
 
-Este repositorio corresponde a la **parte 2 del proyecto [Noctiluca (Frontend)](https://github.com/nicolegugu93/Noctiluca)**.  
-Aquí desarrollamos la **API REST con Node.js, Express y Sequelize**, que da soporte a la aplicación frontend.  
+Este repositorio corresponde a la backend.  
+Aquí desarrollamos la **API REST con Node.js, Express y MongoDB**, que da soporte a la aplicación frontend.  
 
 ---
 
 ## 📂 Estructura del Proyecto
 
-```bash
-api-noctiluca/
-│── assets/                 # Imágenes usadas en README (cover, table, postman, etc.)
-│── config/                 # Configuración general (config.js)
-│── controllers/            # Controladores (lógica de negocio)
-│── database/               # Conexión con la base de datos
-│── middlewares/            # Middlewares (ej. validaciones)
-│── models/                 # Modelos de Sequelize
-│── routes/                 # Definición de endpoints
-│── tests/                  # Tests con Jest + Supertest
-│── .env                    # Variables de entorno (desarrollo)
-│── .env.test               # Variables de entorno (testing)
-│── app.js                  # App principal de Express
-│── server.js               # Arranque del servidor
-│── package.json
-│── README.md
+```
+📦 fullstack-noctiluca-mongo
+├── api-noctiluca-backend/   # Backend con Node.js, Express y MongoDB
+│   ├── assets/              # Imágenes usadas en README (cover, postman, etc.)
+│   ├── config/              # Configuración que carga variables de entorno, MONGO_URI
+│   ├── controllers/         # Lógica de negocio con Mongoose
+│   ├── database/            # Conexión a MongoDB
+│   ├── middlewares/         # Validaciones y middlewares
+│   ├── models/              # Modelos Mongoose
+│   ├── routes/              # Endpoints de la API
+│   ├── tests/               # Tests con Jest + Supertest
+│   ├── .env                 # # Variables de entorno (desarrollo)
+│   ├── .env.test            # Variables de entorno (test)
+│   ├── app.js               # Configuración principal de Express
+│   ├── server.js            # Arranque del servidor
+│   └── package.json
 
 ```
 
 ## ⚙️ Configuración
 
-### 1️⃣ Clonar repositorio
 ```bash
-git clone https://github.com/API-Noctiluca/api-noctiluca.git
-cd api-noctiluca
+git clone https://github.com/API-Noctiluca/fullstack-noctiluca-mongo.git
+cd fullstack-noctiluca-mongo
+```
+2️⃣ Instalar dependencias en cada entorno
 
-2️⃣ Instalar dependencias
+backend: 
+```bash
+cd api-noctiluca-backend
 npm install
+```
 
 3️⃣ Configurar variables de entorno
 📄 .env (desarrollo)
-
-DB_NAME=butterflies_db
-USER_DB=root
-PASSWORD_DB=tu_password
+```
 HOST=localhost
-DB_DIALECT=mysql
-PORT=4000
+PORT=8000
+MONGO_URI=mongodb+srv://<db_username>:<db_password>@<project_name>.cimmmgp.mongodb.net/<db_name>?retryWrites=true&w=majority&appName=<project_name>;
+
+```
 
 📄 .env.test (testing)
 
-Copiar código
-DB_NAME=butterflies_test
-USER_DB=root
-PASSWORD_DB=tu_password
+```
 HOST=localhost
-DB_DIALECT=mysql
 PORT=4000
-
+MONGO_URI=mongodb+srv://<db_username>:<db_password>@<project_name>.cimmmgp.mongodb.net/<db_name_test>?retryWrites=true&w=majority&appName=<project_name>;
+```
 4️⃣ Iniciar servidor
 npm run dev
 
 Servidor corriendo en:
-👉 http://localhost:4000
-
+```
+👉 http://localhost:8000
 ```
 
 ---
 
 ## 🗄️ Base de Datos
 
-La base de datos se gestiona con **MySQL + Sequelize**.  
+La base de datos se gestiona con **MySQL + Mongo**.  
 Incluye el modelo principal `ButterflyModel`.
 
 <p align="center">
@@ -111,80 +116,13 @@ test('GET /butterflies should return array', async () => {
 ```
 ## 📬 Endpoints
 
-### 👉 GET all butterflies
-```
-GET /api/butterflies
-```
---- 
-### 👉 GET one butterfly
-```
-GET /api/butterflies/:id
-```
----
-### 👉 POST create butterfly
-```
-POST /api/butterflies
-```
----
-### 👉 Body (JSON)
-```
-{
-  "name": "Papilio machaon",
-  "family": "Papilionidae",
-  "location": "Europa",
-  "habitat": "Praderas",
-  "morphology": "Alas amarillas con manchas negras",
-  "life": "1 año",
-  "feeding": "Néctar",
-  "conservation": "Protegida",
-  "about_conservation": "LC",
-  "image": "machaon.jpg"
-}
-```
----
-### 👉 PUT update butterfly
-```
-PUT /api/butterflies/:id
-```
----
-### 👉 DELETE butterfly
-```
-DELETE /api/butterflies/:id
-```
----
-## 💻 Ejemplos CURL
-### 👉 GET all
-```
-curl -X GET http://localhost:4000/api/butterflies
-```
----
-## 👉 POST create
-```
-curl -X POST http://localhost:4000/api/butterflies \
--H "Content-Type: application/json" \
--d '{
-  "name": "Papilio machaon",
-  "family": "Papilionidae",
-  "location": "Europa",
-  "habitat": "Praderas",
-  "morphology": "Alas amarillas con manchas negras",
-  "life": "1 año",
-  "feeding": "Néctar",
-  "conservation": "Protegida",
-  "about_conservation": "LC",
-  "image": "machaon.jpg"
-}'
-```
----
-## 🌐 Documentación Postman
+### 🌐 Documentación Postman para testeo de los Endpoints
 
 Consulta toda la documentación de la API haciendo clic en el logo:
 
-<div align="center">
-  <a href="https://documenter.getpostman.com/view/46421388/2sB3HnJKMj" target="_blank">
-    <img src="./assets/postman.jpg" alt="Postman" width="120"/>
-  </a>
-</div>
+<a href="https://documenter.getpostman.com/view/46421388/2sB3HnJKMj" target="_blank">
+  <img src="https://voyager.postman.com/logo/postman-logo-orange-stacked.svg" alt="Postman" width="220"/>
+</a>
 
 ---
 

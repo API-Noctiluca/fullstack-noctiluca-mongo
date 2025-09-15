@@ -2,16 +2,32 @@ import request from "supertest";
 import { app, server } from "../app.js"
 import db_connection from "../database/db_connection.js"
 import ButterflyModel from "../models/ButterflyModel.js";
+import mongoose from "mongoose";
 
 describe("test butterflies crud", () => {
-    beforeAll(async () => { // antes de todo se conecta
-        await db_connection.authenticate() //con eso se conecta
-    })
+    // beforeAll(async () => { // antes de todo se conecta
+        // await db_connection.authenticate() //con eso se conecta || cambiarlo por el db de mongoose
+    // })
 
     //Método GET all butterflies
     describe("GET /butterflies", () => {
         let response
+        beforeAll(async () => {//Conectar a Mongo Atlas una vez antes de correr los test
+            await db_connection()
+        })
+
+        //Cerrar la conexión al terminar
+        afterAll(async () => {
+            await mongoose.connection.close()
+        })
+
+        //Limpiar la colección después de cada test
+        afterEach(async () => {//Limpiar la colección después de cada test
+            await ButterflyModel.deleteMany({})
+        })
+
         beforeEach(async () => {
+            //Insertar datos de prueba en Mongo
             response = await request(app).get("/api/butterflies").send()
         })
 
@@ -29,7 +45,23 @@ describe("test butterflies crud", () => {
     describe("GET /butterflies/:id", () => {
         let response
         let createdButterfly = {}
+
+        beforeAll(async () => {// Conectar a Atlas antes de todo
+            await db_connection()
+        })
+
+        //Limpiar colección después de cada test
+        afterEach(async () =>{
+            await ButterflyModel.deleteMany({})
+        })
+
+        //Cerrar conexión al final
+        afterAll(async ()=> {
+            await mongoose.connection.close()
+        })
+
         beforeEach(async () => {
+            //Crear mariposa de prueba en Mongo Atlas 
             createdButterfly = await ButterflyModel.create({
                 name: "test",
                 other_names: "test",
@@ -43,7 +75,8 @@ describe("test butterflies crud", () => {
                 about_conservation: "LC",
                 image: "test"
             })
-            response = await request(app).get(`/api/butterflies/${createdButterfly.id}`).send()
+
+            response = await request(app).get(`/api/butterflies/${createdButterfly._id}`).send() //Hacer la petición GET con el _id generado por Mongo
         })
 
         test('should return status 200 and JSON', async () => {
@@ -53,13 +86,13 @@ describe("test butterflies crud", () => {
 
         test('should return the correct butterfly', async () => {
             expect(response.body).toBeInstanceOf(Object)
-            expect(response.body.id).toBe(createdButterfly.id)
+            expect(response.body._id).toBe(createdButterfly._id.toString())
             expect(response.body.name).toBe(createdButterfly.name)
             //Se puede añadir todos los campos si se quiere
         })
     })
 
-    //Método POST one butterfly/:id
+    // Método POST one butterfly/:id
     describe("POST /Butterflies", () => {
         let response
         let newButterflyData = {
@@ -75,6 +108,18 @@ describe("test butterflies crud", () => {
             about_conservation: "LC", // siempre tiene que ser un valor válido del ENUM
             image: "test.jpg"
         }
+
+        beforeAll(async () => {
+            await db_connection()
+        })
+
+        afterAll(async () => {
+            await mongoose.connection.close()
+        })
+
+        afterEach(async () => {
+            await ButterflyModel.deleteMany({})
+        })
 
         beforeEach(async () => {
             response = await request(app).post("/api/butterflies").send(newButterflyData)
@@ -113,7 +158,7 @@ describe("test butterflies crud", () => {
         })
 
         test('should actually exist in the database', async () => {
-            const foundButterfly = await ButterflyModel.findOne({where: {id: response.body.id}})
+            const foundButterfly = await ButterflyModel.findById(response.body._id)
             expect(foundButterfly).not.toBeNull()
             expect(foundButterfly.name).toBe(newButterflyData.name)
         })
@@ -124,6 +169,18 @@ describe("test butterflies crud", () => {
         let response 
         let createdButterfly = {}
         let updatedData
+
+        beforeAll(async () =>{
+            await db_connection()
+        })
+
+        // afterAll(async () => {
+        //     await mongoose.connection.close()
+        // })
+
+        // afterEach(async () =>{
+        //     await ButterflyModel.deleteMany({})
+        // })
 
         beforeEach(async () => {
             createdButterfly = await ButterflyModel.create({
@@ -141,12 +198,12 @@ describe("test butterflies crud", () => {
             })
 
             updatedData = { 
-                name: "Update Name",
-                location: "Update Location",
-                image: "updated.jpg"
+                name: "Update Name Butterfly",
+                location: "Update Location Butterfly",
+                habitat: "updated habitat"
             }
     
-            response = await request(app).put(`/api/butterflies/${createdButterfly.id}`).send(updatedData)
+            response = await request(app).put(`/api/butterflies/${createdButterfly._id}`).send(updatedData)
         })
 
         test("should return status 200 and JSON", () => {
@@ -156,17 +213,17 @@ describe("test butterflies crud", () => {
 
         test("should return the updated butterfly", () => {
             expect(response.body).toBeInstanceOf(Object)
-            expect(response.body.id).toBe(createdButterfly.id)
+            expect(response.body._id).toBe(createdButterfly._id.toString())
             expect(response.body.name).toBe(updatedData.name)
             expect(response.body.location).toBe(updatedData.location)
-            expect(response.body.image).toBe(updatedData.image)
+            expect(response.body.habitat).toBe(updatedData.habitat)
         })
 
         test("should update the butterfly in the database", async () => {
-            const butterflyInDB = await ButterflyModel.findByPk(createdButterfly.id) //findByPk: para buscar un registro por su PrimaryKey
+            const butterflyInDB = await ButterflyModel.findById(createdButterfly._id) //findByPk: para buscar un registro por su PrimaryKey
             expect(butterflyInDB.name).toBe(updatedData.name)
             expect(butterflyInDB.location).toBe(updatedData.location)
-            expect(butterflyInDB.image).toBe(updatedData.image)
+            expect(butterflyInDB.habitat).toBe(updatedData.habitat)
         })
     })
 
@@ -174,6 +231,15 @@ describe("test butterflies crud", () => {
     describe("DELETE /butterflies", () => {
         let response
         let createdButterfly = {}
+
+        beforeAll(async () =>{
+            await db_connection()
+        })
+
+        afterAll(async () => {
+            await ButterflyModel.deleteMany({})
+            await mongoose.connection.close()
+        })
 
         beforeEach(async () => {//antes de cada test, crea una mariposa y hace la petición
             createdButterfly = await ButterflyModel.create({
@@ -189,7 +255,7 @@ describe("test butterflies crud", () => {
                 about_conservation: "LC",
                 image: "test"
             })
-            response = await request(app).delete(`/api/butterflies/${createdButterfly.id}`).send()
+            response = await request(app).delete(`/api/butterflies/${createdButterfly._id}`).send()
         })
 
         test('should return a response with status 200 and type json', async () => {
@@ -199,18 +265,20 @@ describe("test butterflies crud", () => {
 
         test('should return a message butterfly deleted successfully', async () => {
             expect(response.body.message).toContain("Butterfly deleted successfully")
-            const foundButterfly = await ButterflyModel.findOne({ where: { id: createdButterfly.id } })
+
+            //Comprobar que ya no existe en la DB
+            const foundButterfly = await ButterflyModel.findById(createdButterfly._id)
             expect(foundButterfly).toBeNull();
         })
     })
 
-    afterAll(async () => { // funciona como el beforeAll, después de cada testeo lo apagamos/cerramos
-        try {
-            await db_connection.truncate({ cascade: true }) //Borra todos los datos de todas las tablas
-            server.close() // para que Jest no se quede colgado
-            await db_connection.close()
-        } catch (error) {
-            console.error("Error limpiando/cerrando la BD de test:", err)
-        }
-    })
+    // afterAll(async () => { // funciona como el beforeAll, después de cada testeo lo apagamos/cerramos
+    //     try {
+    //         await db_connection.truncate({ cascade: true }) //Borra todos los datos de todas las tablas
+    //         server.close() // para que Jest no se quede colgado
+    //         await db_connection.close()
+    //     } catch (error) {
+    //         console.error("Error limpiando/cerrando la BD de test:", err)
+    //     }
+    // })
 })
