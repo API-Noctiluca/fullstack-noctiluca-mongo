@@ -12,6 +12,10 @@ describe("test butterflies crud", () => {
     //Método GET all butterflies
     describe("GET /butterflies", () => {
         let response
+
+        afterEach(async () => {//Limpiar la colección después de cada test
+            await ButterflyModel.delete({})
+        })
         beforeEach(async () => {
             response = await request(app).get("/api/butterflies").send()
         })
@@ -44,7 +48,7 @@ describe("test butterflies crud", () => {
                 about_conservation: "LC",
                 image: "test"
             })
-            response = await request(app).get(`/api/butterflies/${createdButterfly.id}`).send()
+            response = await request(app).get(`/api/butterflies/${createdButterfly._id}`).send()
         })
 
         test('should return status 200 and JSON', async () => {
