@@ -15,7 +15,4 @@ export const DB_NAME = process.env.DB_NAME;
 export const USER_DB = process.env.USER_DB;
 export const DB_DIALECT = process.env.DB_DIALECT;
 export const PASSWORD_DB = process.env.PASSWORD_DB;
-
-console.log(process.env.NODE_ENV);
-
-export const MONGO_URI = `mongodb+srv://noctiluca-admin-api:${encodeURIComponent(PASSWORD_DB)}@api-noctiluca.cimmmgp.mongodb.net/${DB_NAME}?retryWrites=true&w=majority&appName=api-noctiluca`;
+export const MONGO_URI = process.env.MONGO_URI;
