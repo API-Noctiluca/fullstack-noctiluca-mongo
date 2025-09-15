@@ -41,7 +41,7 @@ export default function CreateButterfly() {
       maxFileSize: 10000000,
       sources: ['local', 'url', 'camera']
     }, (error, result) => {
-      console.log('Cloudinary result:', result); 
+      console.log('Cloudinary result:', result);
       if (error) {
         console.error('Error en Cloudinary:', error);
         return;
@@ -54,11 +54,48 @@ export default function CreateButterfly() {
     widget.open();
   };
 
+  // Validación mínima según backend
   const validateField = (name, value) => {
-    if (['name','habitat','feeding','morphology','family','life','conservation','about_conservation','location'].includes(name) && !value.trim()) {
-      return 'Este campo es obligatorio';
+    switch(name) {
+      case "name":
+        if (!value) return "El nombre es obligatorio";
+        if (value.length < 3) return "El nombre debe tener al menos 3 caracteres";
+        break;
+      case "family":
+        if (!value) return "La familia es obligatoria";
+        if (value.length < 3) return "Debe tener al menos 3 caracteres";
+        break;
+      case "location":
+        if (!value) return "La ubicación es obligatoria";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "habitat":
+        if (!value) return "El hábitat es obligatorio";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "morphology":
+        if (!value) return "La morfología es obligatoria";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "life":
+        if (!value) return "La vida es obligatoria";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "feeding":
+        if (!value) return "La alimentación es obligatoria";
+        if (value.length < 5) return "Debe tener al menos 5 caracteres";
+        break;
+      case "conservation":
+        if (!value) return "La conservación es obligatoria";
+        if (value.length < 2) return "Debe tener al menos 2 caracteres";
+        break;
+      case "about_conservation":
+        if (!value) return "Selecciona estado de conservación";
+        break;
+      default:
+        return "";
     }
-    return '';
+    return "";
   };
 
   const handleChange = (e) => {
@@ -74,12 +111,17 @@ export default function CreateButterfly() {
     });
   };
 
+  const isFormValid = () => {
+    return Object.values(formErrors).every(err => !err) &&
+           ["name","family","location","habitat","morphology","life","feeding","conservation","about_conservation"].every(f => formData[f]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setMessage('');
 
-    if (Object.keys(formErrors).length > 0) {
+    if (!isFormValid()) {
       Swal.fire({
         icon: 'error',
         title: 'Errores en el formulario',
@@ -160,8 +202,9 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.name && <p className="error-text">{formErrors.name}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">habitat</label>
                     <input
@@ -172,8 +215,9 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.habitat && <p className="error-text">{formErrors.habitat}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Alimentación</label>
                     <input
@@ -184,10 +228,11 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.feeding && <p className="error-text">{formErrors.feeding}</p>}
                   </div>
                 </div>
 
-                {/* Segunda fila  */}
+                {/* Segunda fila */}
                 <div className="form-row three-cols">
                   <div className="form-group">
                     <label className="form-label">Otros nombres</label>
@@ -199,7 +244,7 @@ export default function CreateButterfly() {
                       className="form-input"
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Morfología</label>
                     <input
@@ -210,8 +255,9 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.morphology && <p className="error-text">{formErrors.morphology}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Conservación detallada</label>
                     <input
@@ -222,6 +268,7 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.conservation && <p className="error-text">{formErrors.conservation}</p>}
                   </div>
                 </div>
 
@@ -237,8 +284,9 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.family && <p className="error-text">{formErrors.family}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Vida</label>
                     <input
@@ -249,8 +297,9 @@ export default function CreateButterfly() {
                       className="form-input"
                       required
                     />
+                    {formErrors.life && <p className="error-text">{formErrors.life}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Estado de conservación</label>
                     <select
@@ -267,10 +316,11 @@ export default function CreateButterfly() {
                       <option value="EN">EN (Endangered)</option>
                       <option value="CR">CR (Critically Endangered)</option>
                     </select>
+                    {formErrors.about_conservation && <p className="error-text">{formErrors.about_conservation}</p>}
                   </div>
                 </div>
 
-                {/* Cuarta fila - 2 columnas */}
+                {/* Cuarta fila */}
                 <div className="form-row two-cols">
                   <div className="form-group">
                     <label className="form-label">Ubicación</label>
@@ -282,7 +332,8 @@ export default function CreateButterfly() {
                       className="form-textarea"
                       required
                     />
-                  </div>                 
+                    {formErrors.location && <p className="error-text">{formErrors.location}</p>}
+                  </div>
 
                   <div className="form-group">
                     <label className="form-label">Imagen</label>
@@ -305,10 +356,9 @@ export default function CreateButterfly() {
                       </button>
                     </div>
                   </div>
-                  
+
                 </div>
 
-                {/* Botón de envío */}
                 <div className="submit-container">
                   <button
                     type="submit"
@@ -318,6 +368,7 @@ export default function CreateButterfly() {
                     {isSubmitting ? 'Guardando...' : 'Crear Mariposa'}
                   </button>
                 </div>
+
               </div>
             </form>
           </div>
