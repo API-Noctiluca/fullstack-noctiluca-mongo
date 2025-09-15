@@ -76,7 +76,7 @@ describe("test butterflies crud", () => {
                 image: "test"
             })
 
-            response = await request(app).get(`/api/butterflies/${createdButterfly._id}`).send()
+            response = await request(app).get(`/api/butterflies/${createdButterfly._id}`).send() //Hacer la petición GET con el _id generado por Mongo
         })
 
         test('should return status 200 and JSON', async () => {
