@@ -109,10 +109,9 @@ Proyecto realizado por:
 
 - Aday Alvarez | Scrum Master & Developer
 - Nicole Guevara | Product Owner & Developer
-- Mariany De Araujo |  Developer
 - Guissella Perez |  Developer
 - Julia Zarco  |  Developer
-
+- Mariany De Araujo |  Developer
 
 ---
 >“Noctiluca” significa luz nocturna, como la bioluminiscencia en el océano o el brillo sutil de los insectos en la oscuridad. Queremos que esta app sea una chispa de conocimiento que ilumine la importancia de los polinizadores en Europa.
