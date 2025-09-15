@@ -10,11 +10,12 @@ export const getAllButterflies = async (req, res) => {
     }
 };
 
-// GET - get one butterfly by ID
+// GET - get one butterfly by ID (MongoDB / Mongoose)
 export const getOneButterfly = async (req, res) => {
   try {
     const { id } = req.params;
-    const butterfly = await ButterflyModel.findByPk(id);
+
+    const butterfly = await ButterflyModel.findById(id); // 👈 Mongo
 
     if (!butterfly) {
       return res.status(404).json({ message: "Mariposa no encontrada" });
