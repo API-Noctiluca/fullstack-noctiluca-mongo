@@ -92,77 +92,77 @@ describe("test butterflies crud", () => {
         })
     })
 
-    //Método POST one butterfly/:id
-    // describe("POST /Butterflies", () => {
-    //     let response
-    //     let newButterflyData = {
-    //         name: "Test Butterfly",
-    //         other_names: "Testus papilio",
-    //         family: "Testidae",
-    //         location: "Testland",
-    //         habitat: "Test habitat",
-    //         morphology: "Test morphology",
-    //         life: "Test life cycle",
-    //         feeding: "Test food",
-    //         conservation: "Test conservation",
-    //         about_conservation: "LC", // siempre tiene que ser un valor válido del ENUM
-    //         image: "test.jpg"
-    //     }
+    // Método POST one butterfly/:id
+    describe("POST /Butterflies", () => {
+        let response
+        let newButterflyData = {
+            name: "Test Butterfly",
+            other_names: "Testus papilio",
+            family: "Testidae",
+            location: "Testland",
+            habitat: "Test habitat",
+            morphology: "Test morphology",
+            life: "Test life cycle",
+            feeding: "Test food",
+            conservation: "Test conservation",
+            about_conservation: "LC", // siempre tiene que ser un valor válido del ENUM
+            image: "test.jpg"
+        }
 
-    //     beforeAll(async () => {
-    //         await db_connection()
-    //     })
+        beforeAll(async () => {
+            await db_connection()
+        })
 
-    //     afterAll(async () => {
-    //         await mongoose.connection.close()
-    //     })
+        afterAll(async () => {
+            await mongoose.connection.close()
+        })
 
-    //     afterEach(async () => {
-    //         await ButterflyModel.deleteMany({})
-    //     })
+        afterEach(async () => {
+            await ButterflyModel.deleteMany({})
+        })
 
-    //     beforeEach(async () => {
-    //         response = await request(app).post("/api/butterflies").send(newButterflyData)
-    //     })
+        beforeEach(async () => {
+            response = await request(app).post("/api/butterflies").send(newButterflyData)
+        })
 
-    //     test('should return status 201 and JSON', async () => {
-    //         expect(response.status).toBe(201) //201-> creado
-    //         expect(response.headers['content-type']).toContain('json')
-    //     })
+        test('should return status 201 and JSON', async () => {
+            expect(response.status).toBe(201) //201-> creado
+            expect(response.headers['content-type']).toContain('json')
+        })
 
-    //     test('should return the created butterfly', async () => {
-    //         expect(response.body).toBeInstanceOf(Object)
-    //         expect(response.body.name).toBe(newButterflyData.name)
-    //         expect(response.body.family).toBe(newButterflyData.family)
-    //         //Se puede añadir más campos si se quiere
-    //     })
+        test('should return the created butterfly', async () => {
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body.name).toBe(newButterflyData.name)
+            expect(response.body.family).toBe(newButterflyData.family)
+            //Se puede añadir más campos si se quiere
+        })
 
-    //     test('should return 400 if required field is missing', async () => {
-    //         const invalidButterfly = {
-    //             //falta nombre
-    //             family: "Testidae",
-    //             location: "Testland",
-    //             habitat: "Test habitat",
-    //             morphology: "test morphology",
-    //             life: "Test life cycle",
-    //             feeding: "test food", 
-    //             conservation: "Test conservation",
-    //             about_conservation: "LC",
-    //             image: "test.jpg"
-    //         }
+        test('should return 400 if required field is missing', async () => {
+            const invalidButterfly = {
+                //falta nombre
+                family: "Testidae",
+                location: "Testland",
+                habitat: "Test habitat",
+                morphology: "test morphology",
+                life: "Test life cycle",
+                feeding: "test food", 
+                conservation: "Test conservation",
+                about_conservation: "LC",
+                image: "test.jpg"
+            }
 
-    //         const response = await request(app).post("/api/butterflies").send(invalidButterfly)
+            const response = await request(app).post("/api/butterflies").send(invalidButterfly)
 
-    //         expect(response.status).toBe(400) // Depende de cómo manejes errores en tu controlador
-    //         expect(response.body).toHaveProperty("errors") //si devuelves un campo error en el JSON
-    //     })
+            expect(response.status).toBe(400) // Depende de cómo manejes errores en tu controlador
+            expect(response.body).toHaveProperty("errors") //si devuelves un campo error en el JSON
+        })
 
-    //     test('should actually exist in the database', async () => {
-    //         const foundButterfly = await ButterflyModel.findById(response.body._id)
-    //         expect(foundButterfly).not.toBeNull()
-    //         expect(foundButterfly.name).toBe(newButterflyData.name)
-    //     })
-    // })
+        test('should actually exist in the database', async () => {
+            const foundButterfly = await ButterflyModel.findById(response.body._id)
+            expect(foundButterfly).not.toBeNull()
+            expect(foundButterfly.name).toBe(newButterflyData.name)
+        })
+    })
 
     //Método PUT one butterfly/:id
     // describe("PUT /butterflies/:id", () => {
