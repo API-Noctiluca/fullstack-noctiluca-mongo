@@ -95,6 +95,20 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+/* Campos con error */
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+  border: 2px solid #ef4444; /* rojo intenso */
+  background-color: rgba(239, 68, 68, 0.05); /* opcional, para un toque suave */
+}
+
+/* Mensaje de error debajo del campo */
+.error-text {
+  color: #ef4444;
+  font-size: 0.875rem; /* tamaño un poquito más pequeño */
+  margin-top: 0.25rem;
+}
 
 .form-content {
   display: flex;

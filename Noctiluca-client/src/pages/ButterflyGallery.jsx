@@ -62,7 +62,7 @@ export default function ButterflyGallery() {
 
   // Función para navegar al detalle de la mariposa
   const handleCardClick = (butterfly) => {
-    navigate(`/butterflydetail/${butterfly.id}`, { state: { butterfly } });
+    navigate(`/butterflydetail/${butterfly._id}`, { state: { butterfly } });
   };
 
   // Función para manejar la edición
@@ -131,7 +131,7 @@ export default function ButterflyGallery() {
       });
 
       if (result.isConfirmed) {
-        await deleteButterfly(butterfly.id);
+        await deleteButterfly(butterfly._id);
         await fetchButterflies();
         
         Swal.fire({
@@ -169,7 +169,7 @@ export default function ButterflyGallery() {
     e.preventDefault();
     
     try {
-      await updateButterfly(editingButterfly.id, editFormData);
+      await updateButterfly(editingButterfly._id, editFormData);
       setShowEditModal(false);
       setEditingButterfly(null);
       // Actualizar la lista después de editar
@@ -310,7 +310,7 @@ export default function ButterflyGallery() {
           {Array.isArray(data) && data.length > 0 ? (
             <div className="cards-grid">
               {data.map((butterfly) => (
-                <div key={butterfly.id} className="card-container">
+                <div key={butterfly._id} className="card-container">
                   <div className="card" onClick={() => handleCardClick(butterfly)}>
                     
                     {/* Parte frontal - Imagen con estado de conservación */}

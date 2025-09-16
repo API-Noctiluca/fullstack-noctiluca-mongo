@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createButterfly } from '../services/ButterflyServices.jsx';
+import Swal from 'sweetalert2';
 import '../style/createbutterfly.css';
 
 export default function CreateButterfly() {
@@ -20,10 +21,11 @@ export default function CreateButterfly() {
     image: ''
   });
 
+  const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
-  const handleImageUpload = () => {
 
+  const handleImageUpload = () => {
     if (!window.cloudinary) {
       alert('Error: Cloudinary no está disponible. Verifica que el script esté cargado.');
       return;
@@ -39,30 +41,78 @@ export default function CreateButterfly() {
       maxFileSize: 10000000,
       sources: ['local', 'url', 'camera']
     }, (error, result) => {
-      console.log('Cloudinary result:', result); 
-
+      console.log('Cloudinary result:', result);
       if (error) {
         console.error('Error en Cloudinary:', error);
         return;
       }
-
       if (result && result.event === "success") {
-        console.log('Imagen subida exitosamente:', result.info.secure_url);
-        setFormData(prev => ({
-          ...prev,
-          image: result.info.secure_url
-        }));
+        setFormData(prev => ({ ...prev, image: result.info.secure_url }));
       }
     });
 
     widget.open();
   };
+
+  const validateField = (name, value) => {
+    switch(name) {
+      case "name":
+        if (!value) return "El nombre es obligatorio";
+        if (value.length < 3) return "El nombre debe tener al menos 3 caracteres";
+        break;
+      case "family":
+        if (!value) return "La familia es obligatoria";
+        if (value.length < 3) return "Debe tener al menos 3 caracteres";
+        break;
+      case "location":
+        if (!value) return "La ubicación es obligatoria";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "habitat":
+        if (!value) return "El hábitat es obligatorio";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "morphology":
+        if (!value) return "La morfología es obligatoria";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "life":
+        if (!value) return "La vida es obligatoria";
+        if (value.length < 10) return "Debe tener al menos 10 caracteres";
+        break;
+      case "feeding":
+        if (!value) return "La alimentación es obligatoria";
+        if (value.length < 5) return "Debe tener al menos 5 caracteres";
+        break;
+      case "conservation":
+        if (!value) return "La conservación es obligatoria";
+        if (value.length < 2) return "Debe tener al menos 2 caracteres";
+        break;
+      case "about_conservation":
+        if (!value) return "Selecciona estado de conservación";
+        break;
+      default:
+        return "";
+    }
+    return "";
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    const error = validateField(name, value);
+    setFormErrors(prev => {
+      const updated = { ...prev };
+      if (error) updated[name] = error;
+      else delete updated[name];
+      return updated;
+    });
+  };
+
+  const isFormValid = () => {
+    return Object.values(formErrors).every(err => !err) &&
+           ["name","family","location","habitat","morphology","life","feeding","conservation","about_conservation"].every(f => formData[f]);
   };
 
   const handleSubmit = async (e) => {
@@ -70,15 +120,20 @@ export default function CreateButterfly() {
     setIsSubmitting(true);
     setMessage('');
 
-    try {
-      const newId = Date.now().toString();
-      const newButterfly = {
-        //id: newId,
-        ...formData
-      };
+    if (!isFormValid()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errores en el formulario',
+        html: Object.values(formErrors).join('<br>')
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
+    try {
+      const newButterfly = { ...formData };
       const result = await createButterfly(newButterfly);
-      
+
       if (result) {
         setMessage('¡Mariposa añadida correctamente!');
         setFormData({
@@ -94,10 +149,8 @@ export default function CreateButterfly() {
           about_conservation: '',
           image: ''
         });
-
-        setTimeout(() => {
-          navigate('/butterflygallery'); 
-        }, 1500);
+        setFormErrors({});
+        setTimeout(() => navigate('/butterflygallery'), 1500);
       } else {
         setMessage('Error al añadir la mariposa');
       }
@@ -108,18 +161,13 @@ export default function CreateButterfly() {
     }
   };
 
-  const handleBackToGallery = () => {
-    navigate('/butterflygallery');
-  };
+  const handleBackToGallery = () => navigate('/butterflygallery');
 
   return (
     <section className="bg-gradient-to-t from-rosaatardecer to-indigoprofundo font-libre min-h-screen">
       <div className="create-butterfly-container">
 
-        {/* Contenido principal */}
         <div className="main-content">
-          
-          {/* FORMULARIO */}
           <div className="form-wrapper">
             <div className="header-section">
               <h1 className="main-title">
@@ -141,6 +189,7 @@ export default function CreateButterfly() {
               )}
 
               <div className="form-content">
+
                 {/* Primera fila - 3 columnas */}
                 <div className="form-row three-cols">
                   <div className="form-group">
@@ -150,23 +199,25 @@ export default function CreateButterfly() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.name ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.name && <p className="error-text">{formErrors.name}</p>}
                   </div>
-                  
+
                   <div className="form-group">
-                    <label className="form-label">habitat</label>
+                    <label className="form-label">Habitat</label>
                     <input
                       type="text"
                       name="habitat"
                       value={formData.habitat}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.habitat ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.habitat && <p className="error-text">{formErrors.habitat}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Alimentación</label>
                     <input
@@ -174,13 +225,14 @@ export default function CreateButterfly() {
                       name="feeding"
                       value={formData.feeding}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.feeding ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.feeding && <p className="error-text">{formErrors.feeding}</p>}
                   </div>
                 </div>
 
-                {/* Segunda fila  */}
+                {/* Segunda fila */}
                 <div className="form-row three-cols">
                   <div className="form-group">
                     <label className="form-label">Otros nombres</label>
@@ -189,10 +241,10 @@ export default function CreateButterfly() {
                       name="other_names"
                       value={formData['other_names']}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.other_names ? 'error' : ''}`}
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Morfología</label>
                     <input
@@ -200,11 +252,12 @@ export default function CreateButterfly() {
                       name="morphology"
                       value={formData.morphology}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.morphology ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.morphology && <p className="error-text">{formErrors.morphology}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Conservación detallada</label>
                     <input
@@ -212,9 +265,10 @@ export default function CreateButterfly() {
                       name="conservation"
                       value={formData.conservation}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.conservation ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.conservation && <p className="error-text">{formErrors.conservation}</p>}
                   </div>
                 </div>
 
@@ -227,11 +281,12 @@ export default function CreateButterfly() {
                       name="family"
                       value={formData.family}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.family ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.family && <p className="error-text">{formErrors.family}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Vida</label>
                     <input
@@ -239,18 +294,19 @@ export default function CreateButterfly() {
                       name="life"
                       value={formData.life}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${formErrors.life ? 'error' : ''}`}
                       required
                     />
+                    {formErrors.life && <p className="error-text">{formErrors.life}</p>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label className="form-label">Estado de conservación</label>
                     <select
                       name="about_conservation"
                       value={formData.about_conservation}
                       onChange={handleChange}
-                      className="form-select"
+                      className={`form-select ${formErrors.about_conservation ? 'error' : ''}`}
                       required
                     >
                       <option value="">Seleccionar</option>
@@ -260,10 +316,11 @@ export default function CreateButterfly() {
                       <option value="EN">EN (Endangered)</option>
                       <option value="CR">CR (Critically Endangered)</option>
                     </select>
+                    {formErrors.about_conservation && <p className="error-text">{formErrors.about_conservation}</p>}
                   </div>
                 </div>
 
-                {/* Cuarta fila - 2 columnas */}
+                {/* Cuarta fila */}
                 <div className="form-row two-cols">
                   <div className="form-group">
                     <label className="form-label">Ubicación</label>
@@ -272,10 +329,11 @@ export default function CreateButterfly() {
                       value={formData.location}
                       onChange={handleChange}
                       rows="4"
-                      className="form-textarea"
+                      className={`form-textarea ${formErrors.location ? 'error' : ''}`}
                       required
                     />
-                  </div>                 
+                    {formErrors.location && <p className="error-text">{formErrors.location}</p>}
+                  </div>
 
                   <div className="form-group">
                     <label className="form-label">Imagen</label>
@@ -285,7 +343,7 @@ export default function CreateButterfly() {
                         value={formData.image}
                         onChange={handleChange}
                         rows="3"
-                        className="form-textarea"
+                        className={`form-textarea ${formErrors.image ? 'error' : ''}`}
                         placeholder="https://"
                       />
                       <div className="upload-divider">O</div>
@@ -298,19 +356,18 @@ export default function CreateButterfly() {
                       </button>
                     </div>
                   </div>
-                  
                 </div>
 
-                {/* Botón de envío */}
                 <div className="submit-container">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || Object.keys(formErrors).length > 0}
                     className={`submit-button ${isSubmitting ? 'disabled' : ''}`}
                   >
                     {isSubmitting ? 'Guardando...' : 'Crear Mariposa'}
                   </button>
                 </div>
+
               </div>
             </form>
           </div>
