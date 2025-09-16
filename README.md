@@ -84,7 +84,7 @@ npm install
 
 Consulta toda la documentación de la API haciendo clic en el logo:
 
-<a href="https://documenter.getpostman.com/view/46421388/2sB3HnJKMj" target="_blank">
+<a href="https://documenter.getpostman.com/view/46421388/2sB3HqJJas" target="_blank">
   <img src="https://voyager.postman.com/logo/postman-logo-orange-stacked.svg" alt="Postman" width="220"/>
 </a>
 

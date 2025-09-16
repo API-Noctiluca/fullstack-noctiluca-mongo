@@ -100,27 +100,60 @@ Incluye el modelo principal `ButterflyModel`.
 
 ---
 
+## 🔒 Validators  
+
+En nuestro proyecto hemos implementado con **validadores y middlewares** que garantizan la seguridad y consistencia de los datos.  
+👉 <a href="../api-noctiluca-backend/validators/butterfliesValidator.js">Conócelos aquí</a>
+
+
 ## 🧪 Testing
 
-Se usa **Jest + Supertest** para pruebas unitarias y de integración.
+Usamos **Jest + Supertest** para asegurar la calidad mediante pruebas unitarias y de integración.
 
 ### Ejecutar tests
-```bash
-Ejemplo de test
 
-test('GET /butterflies should return array', async () => {
-  const response = await request(app).get("/api/butterflies");
-  expect(response.status).toBe(200);
-  expect(response.body).toBeInstanceOf(Array);
-});
 ```
+npm run test
+```
+
+Ejemplo de test:
+```bash
+describe("GET /butterflies", () => {
+        let response
+        beforeAll(async () => {
+            await db_connection()
+        })
+        afterAll(async () => {
+            await mongoose.connection.close()
+        })
+        afterEach(async () => {
+            await ButterflyModel.deleteMany({})
+        })
+        beforeEach(async () => {
+            response = await request(app).get("/api/butterflies").send()
+        })
+        test('should return a response with status 200 and type json', async () => {
+            expect(response.status).toBe(200)
+            expect(response.headers['content-type']).toContain('json')
+        })
+        test('should return array of butterflies', async () => {
+            expect(response.body).toBeInstanceOf(Array)
+        })
+    });
+```
+
+### Explora más en nuestros tests completos:
+<a href="../api-noctiluca-backend/test/butterflies.test.js">Ver archivo de pruebas</a>
+
+<img src="../api-noctiluca-backend/assets/testsOk.PNG" alt="Postman" width="600"/>
+
 ## 📬 Endpoints
 
 ### 🌐 Documentación Postman para testeo de los Endpoints
 
 Consulta toda la documentación de la API haciendo clic en el logo:
 
-<a href="https://documenter.getpostman.com/view/46421388/2sB3HnJKMj" target="_blank">
+<a href="https://documenter.getpostman.com/view/46421388/2sB3HqJJas" target="_blank">
   <img src="https://voyager.postman.com/logo/postman-logo-orange-stacked.svg" alt="Postman" width="220"/>
 </a>
 
