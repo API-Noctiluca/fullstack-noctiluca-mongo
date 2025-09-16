@@ -2,6 +2,8 @@ import express from "express";
 import helmet from "helmet";           // Seguridad HTTP básica
 import cors from "cors";               // Permite que el frontend haga peticiones
 import morgan from "morgan";           // Logs de requests
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger.js";
 
 import db_connection from "./database/db_connection.js";
 import ButterflyModel from "./models/ButterflyModel.js";
@@ -26,6 +28,9 @@ app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 app.use(logger);
 
+// Ruta para la documentación
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Middleware obligatorio para Content-Type JSON, con esto (GET /api/butterflies desde navegador ya funciona)
 app.use((req, res, next) => {
     if (["POST", "PUT", "PATCH"].includes(req.method) && !req.is('application/json')) {
@@ -38,9 +43,8 @@ app.use((req, res, next) => {
 // Conexión a la base de datos
 // ---------------------
 try {
-    await db_connection.authenticate();               // Conecta a la DB
-    await ButterflyModel.sync();       // Sincroniza el modelo Butterfly
-    console.log("Database connected and Butterfly table synced.");
+    await db_connection(); // 👈 llamar a la función async que hace mongoose.connect()
+    console.log("Database connected successfully");
 } catch (err) {
     console.error("Database connection error:", err);
 }
