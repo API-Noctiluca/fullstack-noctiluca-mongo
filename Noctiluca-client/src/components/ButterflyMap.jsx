@@ -205,7 +205,7 @@ const Map = () => {
     const isoCode = getCountryISO(geo);
     if (!isoCode) return;
     const butterfliesInCountry = butterfliesData.filter((butterfly) => {
-      const countries = extractCountriesFromLocation(butterfly.Location || '');
+      const countries = extractCountriesFromLocation(butterfly.location || '');
       return countries.includes(isoCode);
     });
     if (butterfliesInCountry.length > 0) {
@@ -300,11 +300,11 @@ const Map = () => {
                     geographies.map((geo) => {
                       const iso = getCountryISO(geo);
                       const hasButterflies = iso && butterfliesData.some(butterfly => {
-                        const countries = extractCountriesFromLocation(butterfly.Location || '');
+                        const countries = extractCountriesFromLocation(butterfly.location || '');
                         return countries.includes(iso);
                       });
                       const butterflyCount = iso ? butterfliesData.filter(butterfly => {
-                        const countries = extractCountriesFromLocation(butterfly.Location || '');
+                        const countries = extractCountriesFromLocation(butterfly.location || '');
                         return countries.includes(iso);
                       }).length : 0;
 
@@ -313,7 +313,7 @@ const Map = () => {
                           fill: hasButterflies ? '#F0DC82' : '#DFD8C3',
                           stroke: '#907958',
                           strokeWidth: 0.9,
-                          cursor: 'pointer', 
+                          cursor: 'pointer',
                           opacity: 1,
                           outline: 'none',
                           transition: 'all 0.2s ease'
@@ -480,7 +480,7 @@ const Map = () => {
                 ))}
               </div>
             </div>
-            
+
             {/* Footer modal responsivo */}
             <div
               className="mt-2 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-center"
