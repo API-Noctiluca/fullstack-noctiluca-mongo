@@ -76,7 +76,7 @@ export default function ButterflyGallery() {
       location: butterfly.location || '',
       habitat: butterfly.habitat || '',
       morphology: butterfly.morphology || '',
-      life: butterfly.Life || '',
+      life: butterfly.life || '',
       feeding: butterfly.feeding || '',
       conservation: butterfly.conservation || '',
       about_conservation: butterfly.about_conservation || '',

@@ -158,6 +158,9 @@ Consulta toda la documentación de la API haciendo clic en el logo:
 </a>
 
 ---
+## 🌐 Documentación Swagger
+Una vez que la API esté en ejecución, copia y pega la URL: `http://localhost:8000/api-docs/#/`
+---
 
 ✨ Créditos
 
